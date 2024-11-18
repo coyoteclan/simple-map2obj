@@ -2,12 +2,9 @@ import re
 import os
 import json
 import sys
-#from tabulate import tabulate
 from modules.thirdparty.tabulate import tabulate
 from modules.thirdparty.termcolor import termcolor
-#from modules.utils import Vector3
 from modules.utils import parse_planes
-#from modules.utils import intersect_planes
 from modules.utils import calculate_vertices
 
 def merge_objs(output_file, input_files):
@@ -18,16 +15,13 @@ def merge_objs(output_file, input_files):
         for obj_file in input_files:
             with open(obj_file, 'r') as in_file:
                 for line in in_file:
-                    if line.startswith('v '):  # Vertex data
+                    if line.startswith('v '): # Vertex data
                         out_file.write(line)
                         vertex_offset += 1
-                    elif line.startswith('f '):  # Face data
+                    elif line.startswith('f '): # Face data
                         face = line.split()
                         new_face = ['f']
                         for vertex in face[1:]:
-                            """indices = list(map(int, vertex.split('/')))
-                            indices[0] += vertex_offset  # Adjust vertex index
-                            new_face.append('/'.join(map(str, indices)))"""
                             if file_count != 0:
                                 vertex_offset = file_count * 8
                                 vertex = str(int(vertex) + vertex_offset)
@@ -36,7 +30,7 @@ def merge_objs(output_file, input_files):
                     elif line.startswith('o ') or line.startswith('g ') or line.startswith('#'):
                         if line.endswith("Kazam"):
                             continue
-                        out_file.write(line)  # Preserve object names, groups, and comments
+                        out_file.write(line)
                 file_count += 1
     
     if not saveworkfiles:
@@ -88,7 +82,6 @@ def convert(filepath):
             for i in range(6):
                 brush_data.append(map_data[map_data.index(line) + 2 + i].strip())
             
-            #brushes["Brushes"]["brush_"+line[-2]] = brush_data
             brush_id = re.split(" ", line.strip())[2]
             brushes["Brushes"]["brush_" + brush_id] = brush_data
         
@@ -100,7 +93,6 @@ def convert(filepath):
         data = json.load(jsonfile)
         key = data.get("Brushes")
         workingfiles = []
-        #keykey = key.get("brush_0")
         for keykey in key:
             keykeydata = key.get(keykey)
             
@@ -151,8 +143,3 @@ if __name__ == "__main__":
     saveworkfiles = False
     godot = False
     init()
-
-"""for root, _, files in os.walk(os.path.join(os.path.dirname(os.path.realpath(__file__)), "maps")):
-    for file in files:
-        if file.endswith(".map"):
-            convert(os.path.join(root, file))"""
